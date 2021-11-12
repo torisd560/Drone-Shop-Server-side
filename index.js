@@ -36,7 +36,24 @@ async function run() {
         res.send(allProducts)
     })
 
-    //GET method for one product
+    //============ POST method for add product===================
+
+    app.post('/moreProducts', async (req, res) =>{
+        const product = await productCollection.insertOne(req.body)
+        res.send(product)
+    })
+
+
+    //============== DELETE method for delete product =================
+
+    app.delete('/moreProducts/:id', async (req, res) =>{
+        const id = req.params.id
+        const query = { _id : ObjectId(id) }
+        const result = await productCollection.deleteOne(query)
+        res.send(result)
+    })
+
+    //=================== GET method for one product ==================
     app.get('/moreProducts/placeOrder/:id', async (req, res) =>{
         const id = req.params.id
         const query = {_id : ObjectId(id)}
@@ -47,7 +64,6 @@ async function run() {
     // =================POST method for order data=================
     app.post('/orders', async(req, res) =>{
         const orders = await ordersCollection.insertOne(req.body) 
-        console.log(orders)
         res.send(orders)
     })
 
@@ -64,7 +80,7 @@ async function run() {
         console.log(query)
         const result = await ordersCollection.find(query).toArray()
         res.send(result)
-        console.log(result)
+       
     })
 
     // ===========PUT method for update order status=====================
@@ -80,7 +96,7 @@ async function run() {
         }
         const result = await ordersCollection.updateOne(filter, updateDoc, options)
         res.send(result)
-        console.log(result)
+      
     })
 
 
@@ -90,7 +106,7 @@ async function run() {
         const query = {_id : ObjectId(id)}
         const deleteOrder = await ordersCollection.deleteOne(query) 
         res.send(deleteOrder)
-        console.log(deleteOrder)
+      
     })
 
 

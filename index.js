@@ -24,6 +24,7 @@ async function run() {
         const productCollection = database.collection('products')
         const userCollection = database.collection('users')
         const ordersCollection = database.collection('orders')
+        const reviewCollection = database.collection('reviews')
 
 
         // ================GET method for getting 6 products===============
@@ -79,7 +80,6 @@ async function run() {
         app.get('/orders/:email', async (req, res) => {
             const email = req.params.email
             const query = { email: email }
-            console.log(query)
             const result = await ordersCollection.find(query).toArray()
             res.send(result)
 
@@ -119,15 +119,15 @@ async function run() {
 
 
         // ============= GET method for admin user ======================
-        app.get('/users/:email', async (req, res) =>{
+        app.get('/users/:email', async (req, res) => {
             const email = req.params.email
-            const query = {email : email}
+            const query = { email: email }
             const user = await userCollection.findOne(query)
             let isAdmin = false
-            if(user?.role === 'admin'){
+            if (user?.role === 'admin') {
                 isAdmin = true
             }
-            res.send({admin : isAdmin})
+            res.send({ admin: isAdmin })
         })
 
         // =======================PUT method for upsert user=====================
@@ -147,9 +147,24 @@ async function run() {
             const updateDoc = { $set: { role: 'admin' } }
             const result = await userCollection.updateOne(filter, updateDoc)
             res.send(result)
-            console.log(result)
         })
+
+
+        // ======================= POST method to post reviews data ====================
+        app.post('/reviews', async (req, res) => {
+            const review = await reviewCollection.insertOne(req.body)
+            res.send(review)
+        })
+
+        //==================== GET method for get revieews=====================
+        app.get('/reviews', async (req, res) => {
+            const reviews = await reviewCollection.find({}).toArray()
+            res.send(reviews)
+        })
+
     }
+
+
 
     finally {
         // await client.close()
